@@ -1,23 +1,16 @@
 require 'base64'
-
 class S3UploadsController < ApplicationController
-
-  # You might want to look at https and expiration_date below.
-  #        Possibly these should also be configurable from S3Config...
-
-  skip_before_filter :verify_authenticity_token
   include S3SwfUpload::Signature
   
   def index
-    bucket          = S3SwfUpload::S3Config.bucket
-    access_key_id   = S3SwfUpload::S3Config.access_key_id
-    acl             = S3SwfUpload::S3Config.acl
-    secret_key      = S3SwfUpload::S3Config.secret_access_key
-    key             = params[:key]
+    bucket          = ''
+    access_key_id   = ''
+    acl             = ''
+    secret_key      = ''
+    key             = File.join('cache', params[:key])
     content_type    = params[:content_type]
     https           = 'false'
-    error_message   = ''
-    expiration_date = 1.hours.from_now.utc.strftime('%Y-%m-%dT%H:%M:%S.000Z')
+    expiration_date = 3.hours.from_now.utc.strftime('%Y-%m-%dT%H:%M:%S.000Z')
 
     policy = Base64.encode64(
 "{
@@ -45,7 +38,7 @@ class S3UploadsController < ApplicationController
           :acl             => acl,
           :expirationdate  => expiration_date,
           :https           => https,
-          :errorMessage    => error_message.to_s
+          :key             => key
         }.to_xml
       }
     end
