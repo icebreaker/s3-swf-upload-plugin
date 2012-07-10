@@ -139,6 +139,7 @@ package com.adobe.net
 			["text/x-setext","etx"],
 			["video/mpeg","mpg","mpeg","mpe"],
 			["video/quicktime","mov","qt"],
+			["video/mp4","mp4"],
 			["video/vnd.mpegurl","m4u","mxu"],
 			["video/x-flv","flv"],
 			["video/x-msvideo","avi"],
