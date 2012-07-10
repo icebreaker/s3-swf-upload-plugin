@@ -31,7 +31,7 @@ package  {
 
 		private function registerCallbacks():void 
 		{
-			if (ExternalInterface.available) 
+			if(ExternalInterface.available) 
 			{
 				ExternalInterface.addCallback("init", init);
 				ExternalInterface.addCallback("start", start);
@@ -100,6 +100,7 @@ package  {
 
 						queue[i].reference.cancel();
 						queue.splice(i, 1);
+						break;
 					}
 				}
 			}
