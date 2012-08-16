@@ -163,6 +163,8 @@ package  {
 
 		private function onSignatureComplete(event:Event):void
 		{
+			ExternalInterface.call("s3_upload.log", "onSignatureComplete");
+
 			request = new S3UploadRequest(signature.upload_options);
 			request.addEventListener(Event.OPEN, onOpen);
 			request.addEventListener(ProgressEvent.PROGRESS, onProgress);
@@ -175,7 +177,7 @@ package  {
 
 		private function onOpen(event:Event):void
 		{
-			// empty
+			ExternalInterface.call("s3_upload.log", "onOpen");
 		}
 
 		private function onProgress(event:ProgressEvent):void 
@@ -187,27 +189,40 @@ package  {
 		private function onIoError(event:IOErrorEvent):void
 		{
 			ExternalInterface.call("s3_upload.callback", this.id, 'onError', event, file.id, file.reference, file.data);
+			ExternalInterface.call("s3_upload.log", "onIoError:" + event.text);
 		}    
 
 		private function onHttpStatus(event:HTTPStatusEvent):void
 		{
-			// empty
+			ExternalInterface.call("s3_upload.log", "onHttpStatus:" + event.status.toString());
 		}
 
 		private function onSecurityError(event:SecurityErrorEvent):void
 		{
 			ExternalInterface.call("s3_upload.callback", this.id, 'onError', event, file.id, file.reference, file.data);
+			ExternalInterface.call("s3_upload.log", "onSecurityError:" + event.text);
 		}
 
 		private function onComplete(event:DataEvent):void
 		{
-			var xml:XMLDocument = new XMLDocument();
-			xml.ignoreWhite = true;                                                                                               
-			xml.parseXML(event.data);
-			var root:XMLNode = xml.firstChild.firstChild.firstChild;
+			ExternalInterface.call("s3_upload.log", "onComplete");
 
-			file.data.url = root.nodeValue;
-			ExternalInterface.call("s3_upload.callback", this.id, 'onComplete', event, file.id, file.reference, file.data);
+			try
+			{
+				var xml:XMLDocument = new XMLDocument();
+				xml.ignoreWhite = true;                                                                                               
+				xml.parseXML(event.data);
+				var root:XMLNode = xml.firstChild.firstChild.firstChild;
+
+				file.data.url = root.nodeValue;
+				ExternalInterface.call("s3_upload.callback", this.id, 'onComplete', event, file.id, file.reference, file.data);
+			}
+			catch(err:Error)
+			{
+				ExternalInterface.call("s3_upload.log", "onComplete::Exception:" + err.message);
+				ExternalInterface.call("s3_upload.log", "onComplete::Response:" + event.data);
+				ExternalInterface.call("s3_upload.callback", this.id, 'onError', event, file.id, file.reference, file.data);
+			}
 
 			uploadNextFile();
 		}
