@@ -212,9 +212,12 @@ package  {
 				var xml:XMLDocument = new XMLDocument();
 				xml.ignoreWhite = true;                                                                                               
 				xml.parseXML(event.data);
-				var root:XMLNode = xml.firstChild.firstChild.firstChild;
+				var root:XMLNode = xml.firstChild;
+				
+				if(root == null || root.nodeName == "Error")
+					throw new Error("Unexpected XML response.");
 
-				file.data.url = root.nodeValue;
+				file.data.url = root.firstChild.firstChild.nodeValue;
 				ExternalInterface.call("s3_upload.callback", this.id, 'onComplete', event, file.id, file.reference, file.data);
 			}
 			catch(err:Error)

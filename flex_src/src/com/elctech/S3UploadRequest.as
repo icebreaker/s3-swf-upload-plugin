@@ -35,7 +35,7 @@ package com.elctech {
 		private var _bucket:String;
 		private var _key:String;
 		private var _options:S3UploadOptions;
-		private var _httpStatusErrorReceived:Boolean;
+		private var _suppressIoError:Boolean;
 		private var _uploadStarted:Boolean;
 		private var fileReference:FileReference;
 
@@ -145,6 +145,7 @@ package com.elctech {
 				throw new Error("S3PostRequest object cannot be reused.  Create another S3PostRequest object to send another request to Amazon S3.");
 			}
 			_uploadStarted = true;
+			_suppressIoError = false;
 
 			// Save the FileReference object so that it doesn't get GCed.
 			// If this happens, we can lose events that should be dispatched.
@@ -201,6 +202,9 @@ package com.elctech {
 		}
 		private function onIOError(event:IOErrorEvent):void 
 		{
+			if(_suppressIoError)
+				return;
+
 			this.dispatchEvent(event);
 		}
 		private function onSecurityError(event:SecurityErrorEvent):void 
@@ -217,7 +221,25 @@ package com.elctech {
 		}
 		private function onHttpStatus(event:HTTPStatusEvent):void 
 		{
-			this.dispatchEvent(event);
+			if(Math.floor(event.status / 100) == 2) // 200, 201
+			{
+				_suppressIoError = true;
+
+				// TODO: use XML builder
+				var data:String = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+				data += "<PostResponse>";
+					data += "<Location>http://" + _bucket + "." + ENDPOINT + "/" + _key + "</Location>";
+					data += "<Bucket>" + _bucket + "</Bucket>";
+					data += "<Key>" + _key + "</Key>";
+					data += "<ETag>\"3753245fe74b58638afc62b58c15607d\"</ETag>";
+				data += "</PostResponse>";
+
+				this.dispatchEvent(new DataEvent(DataEvent.UPLOAD_COMPLETE_DATA, event.bubbles, event.cancelable, data));
+			}
+			else
+			{
+				this.dispatchEvent(event);
+			}
 		}
 	}
 
