@@ -165,6 +165,12 @@ package  {
 		{
 			ExternalInterface.call("s3_upload.log", "onSignatureComplete");
 
+			if(request != null)
+			{
+				ExternalInterface.call("s3_upload.log", "onRemoveEventListeners");
+				request.removeListeners();
+			}
+
 			request = new S3UploadRequest(signature.upload_options);
 			request.addEventListener(Event.OPEN, onOpen);
 			request.addEventListener(ProgressEvent.PROGRESS, onProgress);
