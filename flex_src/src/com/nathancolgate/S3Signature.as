@@ -72,14 +72,15 @@ package com.nathancolgate {
 			var loader:URLLoader = URLLoader(event.target);
 			var xml:XML  = new XML(loader.data);
 
-			upload_options.policy			= xml.policy;
-			upload_options.signature		= xml.signature;
-			upload_options.bucket			= xml.bucket;
-			upload_options.AWSAccessKeyId	= xml.accesskeyid;
-			upload_options.acl				= xml.acl;
-			upload_options.Expires			= xml.expirationdate;
-			upload_options.Secure			= xml.https;
-			upload_options.key				= xml.key;
+			upload_options.policy				= xml.policy;
+			upload_options.signature			= xml.signature;
+			upload_options.bucket				= xml.bucket;
+			upload_options.AWSAccessKeyId		= xml.accesskeyid;
+			upload_options.acl					= xml.acl;
+			upload_options.Expires				= xml.expirationdate;
+			upload_options.Secure				= xml.https;
+			upload_options.key					= xml.key;
+			upload_options.ContentDisposition	= xml.contentdisposition;
 
 			dispatchEvent(event);
 		}
