@@ -144,6 +144,12 @@ package  {
 			_file.file.type = file.type;
 			_file.data = new Object();
 
+			var result:Object = ExternalInterface.call("s3_upload.callback", this.id, 'onParams', new Object(), _file.id, _file.reference, _file.data);
+			if(result != null)
+				_file.params = result;
+			else
+				_file.params = new Object();
+
 			queue.push(_file);
 
 			ExternalInterface.call("s3_upload.callback", this.id, 'onSelect', new Object(), _file.id, _file.reference, _file.data);
@@ -155,7 +161,7 @@ package  {
 			{
 				file = queue.splice(0,1)[0];
 
-				signature = new S3Signature(file.reference, options.signature, options.params);
+				signature = new S3Signature(file.reference, options.signature, options.params, file.params);
 				signature.addEventListener(Event.COMPLETE, onSignatureComplete);
 				signature.load();
 			}

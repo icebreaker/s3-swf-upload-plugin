@@ -28,7 +28,7 @@ package com.nathancolgate {
 		private var signatureLoader:URLLoader;
 		private var request:URLRequest;
 
-		public function S3Signature(file:FileReference, signature:String, params:Object) 
+		public function S3Signature(file:FileReference, signature:String, option_params:Object, file_params:Object)
 		{
 			upload_options					= new S3UploadOptions;
 			upload_options.FileSize         = file.size.toString();
@@ -41,21 +41,20 @@ package com.nathancolgate {
 			variables.content_type				= upload_options.ContentType;
 
 			var key:String;
-			for(key in params)
-				variables[key] = params[key];
+			for(key in option_params)
+			{
+				if(option_params[key] is String)
+					variables[key] = option_params[key];
+			}
+			for(key in file_params)
+			{
+				if(file_params[key] is String)
+					variables[key] = file_params[key];
+			}
 
 			request			= new URLRequest(signature);
 			request.method	= URLRequestMethod.GET;
 			request.data	= variables;
-
-			/*
-			var header:URLRequestHeader;
-			for(key in params)
-			{
-				header = new URLRequestHeader(key, params[key]);
-				request.requestHeaders.push(header);
-			}
-			*/
 
 			signatureLoader	= new URLLoader();
 			signatureLoader.dataFormat = URLLoaderDataFormat.TEXT;
