@@ -21,10 +21,12 @@ package  {
 		private var signature:S3Signature;
 		private var request:S3UploadRequest;
 		private var file:Object;
+		private var initialized:Boolean;
 
 		public function S3Uploader() 
 		{
 			super();
+			this.initialized = false;
 			this.id = LoaderInfo(root.loaderInfo).parameters.id;
 			registerCallbacks();
 		}
@@ -42,8 +44,12 @@ package  {
 
 		private function init(options:Object):void 
 		{
+			if(this.initialized)
+				return;
+				
 			file = null;
 			this.options = options;
+			this.initialized = true;
 
 			flash.system.Security.allowDomain("*");
 			addChild(new BrowseButton(options.width, options.height, options.upImg, options.downImg, options.overImg, options.hideButton));
@@ -120,9 +126,10 @@ package  {
 			
 			if(options.multi)
 			{
+				var files:Array = FileReferenceList(event.target).fileList;
 				var i:int;
-				for (i=0; i<event.currentTarget.fileList.length; i++)
-					addFile(event.currentTarget.fileList[i]);
+				for(i=0; i<files.length; i++)
+					addFile(files[i]);
 			} 
 			else 
 			{
@@ -136,7 +143,7 @@ package  {
 		private function addFile(file:FileReference):void
 		{
 			var _file:Object = new Object();
-			_file.id = new Date().getTime().toString() + "_" + queue.length.toString();
+			_file.id = file.size.toString() + "_" + new Date().getTime().toString() + "_" + queue.length.toString();
 			_file.reference = file;
 			_file.file = new Object();
 			_file.file.name = file.name;
