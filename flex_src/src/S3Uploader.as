@@ -1,10 +1,20 @@
 package  {
-	import flash.events.*;
-	import flash.external.*;
-	import flash.net.*;
-	import flash.display.*;
+	import flash.events.EventDispatcher;
+	import flash.events.ProgressEvent;
+	import flash.events.Event;
+	import flash.events.IOErrorEvent;
+	import flash.events.SecurityErrorEvent;
+	import flash.events.HTTPStatusEvent;
+	import flash.events.DataEvent;
+	import flash.events.MouseEvent;
+	import flash.net.FileReference;
+	import flash.net.FileReferenceList;
+	import flash.net.FileFilter;
+	import flash.external.ExternalInterface;
+	import flash.display.Sprite;
+	import flash.display.LoaderInfo;
 	import flash.system.Security;
-	import flash.xml.XMLDocument;                                                                                                 
+	import flash.xml.XMLDocument;
 	import flash.xml.XMLNode;
 	import com.elctech.*;
 	import com.nathancolgate.*;
@@ -38,6 +48,7 @@ package  {
 				ExternalInterface.addCallback("init", init);
 				ExternalInterface.addCallback("start", start);
 				ExternalInterface.addCallback("cancel", cancel);
+				ExternalInterface.addCallback("disable", disable);
 				ExternalInterface.call("s3_upload.init", this.id);
 			}
 		}
@@ -51,7 +62,7 @@ package  {
 			this.options = options;
 			this.initialized = true;
 
-			flash.system.Security.allowDomain("*");
+			Security.allowDomain("*");
 			addChild(new BrowseButton(options.width, options.height, options.upImg, options.downImg, options.overImg, options.hideButton));
 
 			stage.showDefaultContextMenu = false;
@@ -111,9 +122,17 @@ package  {
 				}
 			}
 		}
+
+		private function disable(state:Boolean):void
+		{
+			options.disabled = state;	 
+		}
 		
 		private function clickHandler(event:Event):void
 		{
+			if(options.disabled === true)
+				return;
+
 			if(options.multi)
 				multipleFileDialogBox.browse([fileFilter]);
 			else 
