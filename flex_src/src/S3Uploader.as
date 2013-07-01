@@ -185,7 +185,7 @@ package  {
 		{
 			if(queue.length > 0)
 			{
-				file = queue.splice(0,1)[0];
+				file = queue.shift();
 
 				signature = new S3Signature(file.reference, options.signature, options.params, file.params);
 				signature.addEventListener(Event.COMPLETE, onSignatureComplete);
@@ -201,6 +201,7 @@ package  {
 			{
 				ExternalInterface.call("s3_upload.log", "onRemoveEventListeners");
 				request.removeListeners();
+				request = null;
 			}
 
 			request = new S3UploadRequest(signature.upload_options);
