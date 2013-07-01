@@ -162,7 +162,8 @@ package com.adobe.net
 					}
 				}
 			}
-			return null;
+
+			return "application/octet-stream";
 		}
 
 		/**
