@@ -130,7 +130,7 @@ package  {
 		
 		private function clickHandler(event:Event):void
 		{
-			if(options.disabled === true)
+			if(options.disabled === true || (!options.multi && queue.length > 0))
 				return;
 
 			if(options.multi)
