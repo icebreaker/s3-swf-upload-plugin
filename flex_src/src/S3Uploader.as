@@ -43,6 +43,8 @@ package  {
 
 		private function registerCallbacks():void 
 		{
+			Security.allowDomain("*");
+
 			if(ExternalInterface.available) 
 			{
 				ExternalInterface.addCallback("init", init);
@@ -62,7 +64,6 @@ package  {
 			this.options = options;
 			this.initialized = true;
 
-			Security.allowDomain("*");
 			addChild(new BrowseButton(options.width, options.height, options.upImg, options.downImg, options.overImg, options.hideButton));
 
 			stage.showDefaultContextMenu = false;
