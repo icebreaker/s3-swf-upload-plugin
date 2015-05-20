@@ -50,6 +50,7 @@ package  {
 				ExternalInterface.addCallback("init", init);
 				ExternalInterface.addCallback("start", start);
 				ExternalInterface.addCallback("cancel", cancel);
+				ExternalInterface.addCallback("clear", clear);
 				ExternalInterface.addCallback("disable", disable);
 				ExternalInterface.call("s3_upload.init", this.id);
 			}
@@ -128,7 +129,12 @@ package  {
 		{
 			options.disabled = state;	 
 		}
-		
+
+		private function clear():void
+		{
+			queue.length = 0;
+		}
+
 		private function clickHandler(event:Event):void
 		{
 			if(options.disabled === true || (!options.multi && queue.length > 0))
@@ -142,7 +148,8 @@ package  {
 
 		private function selectFileHandler(event:Event):void 
 		{
-			queue.length = 0;
+			if(options.auto == true)
+				clear();
 			
 			if(options.multi)
 			{
