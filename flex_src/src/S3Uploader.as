@@ -148,8 +148,7 @@ package  {
 
 		private function selectFileHandler(event:Event):void 
 		{
-			if(options.auto == true)
-				clear();
+			clear();
 			
 			if(options.multi)
 			{
@@ -163,6 +162,8 @@ package  {
 				addFile(FileReference(event.target));
 			}
 	
+			ExternalInterface.call("s3_upload.callback", this.id, 'onSelectCompleted', new Object());
+
 			if(options.auto == true)
 				uploadNextFile();
 		}
