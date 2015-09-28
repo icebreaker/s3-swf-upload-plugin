@@ -63,7 +63,7 @@ package  {
 			var i:int;
 
 			if(extensions == null)
-				extensions = '';
+				return null;
 
 			fileFilters = new Array();
 			extsArray = extensions.split('|');
@@ -89,7 +89,10 @@ package  {
 				fileFilters.push(new FileFilter(desc, exts));
 			}
 
-			return fileFilters;
+			if(fileFilters.length > 0)
+				return fileFilters;
+
+			return null;
 		}
 
 		private function init(options:Object):void 
