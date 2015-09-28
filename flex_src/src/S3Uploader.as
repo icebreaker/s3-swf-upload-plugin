@@ -24,7 +24,7 @@ package  {
 
 		private var multipleFileDialogBox:FileReferenceList;
 		private var singleFileDialogBox:FileReference;
-		private var fileFilter:FileFilter;
+		private var fileFilters:Array;
 
 		private var queue:Array;
 		private var options:Object;
@@ -56,6 +56,42 @@ package  {
 			}
 		}
 
+		private function createFileFilters(extensions:String):Array
+		{
+			var fileFilters:Array;
+			var extsArray:Array;
+			var i:int;
+
+			if(extensions == null)
+				extensions = '';
+
+			fileFilters = new Array();
+			extsArray = extensions.split('|');
+
+			for (i = 0; i < extsArray.length; i++)
+			{
+				var ext:String = extsArray[i].replace(/^\s+|\s+$/g, '');
+
+				if(ext.length == 0)
+					continue;
+
+				var matches:Array = ext.match(/^(.*?)\s+\((.*?)\)$/);
+
+				if(matches.length < 3)
+					continue;
+
+				var desc:String = matches[1];
+				var exts:String = matches[2].replace(/\s+/g, '').replace(/;$/, '');
+
+				if(desc.length == 0 || exts.length == 0)
+					continue;
+				
+				fileFilters.push(new FileFilter(desc, exts));
+			}
+
+			return fileFilters;
+		}
+
 		private function init(options:Object):void 
 		{
 			if(this.initialized)
@@ -73,7 +109,7 @@ package  {
 
 			this.addEventListener(MouseEvent.CLICK, clickHandler);
 
-			fileFilter				= new FileFilter(options.fileDesc, options.fileExt);
+			fileFilters				= createFileFilters(options.extensions);
 			multipleFileDialogBox	= new FileReferenceList;
 			singleFileDialogBox		= new FileReference;
 
@@ -141,9 +177,9 @@ package  {
 				return;
 
 			if(options.multi)
-				multipleFileDialogBox.browse([fileFilter]);
+				multipleFileDialogBox.browse(fileFilters);
 			else 
-				singleFileDialogBox.browse([fileFilter]);
+				singleFileDialogBox.browse(fileFilters);
 		}
 
 		private function selectFileHandler(event:Event):void 
