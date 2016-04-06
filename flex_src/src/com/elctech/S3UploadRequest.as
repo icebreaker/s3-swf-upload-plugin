@@ -60,15 +60,7 @@ package com.elctech {
 
 		private function buildUrl():String 
 		{
-
 			var canUseVanityStyle:Boolean = canUseVanityStyle(_bucket);
-
-			if(_options.Secure!="false" && canUseVanityStyle && _bucket.match(/\./)) {
-				// We cannot use SSL for bucket names containing "."
-				// The certificate won't match "my.bucket.s3.amazonaws.com"
-				throw new SecurityError("Cannot use SSL with bucket name containing '.': " + _bucket);
-			}
-
 			var postUrl:String = "http" + ((_options.Secure == 'true') ? "s" : "") + "://";
 
 			if(canUseVanityStyle) {
