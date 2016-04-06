@@ -52,9 +52,10 @@ package com.nathancolgate {
 					variables[key] = file_params[key];
 			}
 
-			request			= new URLRequest(signature);
-			request.method	= URLRequestMethod.GET;
-			request.data	= variables;
+			request	= new URLRequest(signature);
+			request.method = URLRequestMethod.POST;
+			request.data = variables;
+			request.contentType = 'application/x-www-form-urlencoded';
 
 			signatureLoader	= new URLLoader();
 			signatureLoader.dataFormat = URLLoaderDataFormat.TEXT;
