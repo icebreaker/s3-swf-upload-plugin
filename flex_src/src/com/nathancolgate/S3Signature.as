@@ -96,7 +96,7 @@ package com.nathancolgate {
 
 		private function getFileName(file:FileReference):String 
 		{
-			var fileName:String = file.name.replace(/^.*(\\|\/)/gi, '').replace(/[^A-Za-z0-9\.\-]/gi, '_');
+			var fileName:String = file.name.replace(/^.*(\\|\/)/gi, '').replace(/[^A-Za-z0-9\.\-\s]/gi, '_');
 			return fileName;
 		}
 	}
